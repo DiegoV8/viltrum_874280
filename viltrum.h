@@ -7,6 +7,7 @@
 #include "src/monte-carlo/monte-carlo-per-bin.h"
 #include "src/monte-carlo/monte-carlo-per-bin-parallel.h"
 #include "src/newton-cotes/newton-cotes.h"
+#include "src/regla-rectangulo/regla-rectangulo.h"
 #include "src/combination/fubini.h"
 #include "src/nested/integrator-adaptive-tolerance.h"
 #include "src/nested/integrator-adaptive-iterations.h"
