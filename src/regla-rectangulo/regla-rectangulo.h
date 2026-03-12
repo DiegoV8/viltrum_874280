@@ -1,67 +1,66 @@
 #pragma once
 #include <array>
+#include <cmath>
 #include <vector>
-#include <algorithm>
 #include "../range.h"
 
 namespace viltrum {
 
-template<std::size_t DIM>
 class RectangleRule {
-    std::array<std::size_t, DIM> resolution;
+    std::size_t steps;
 
 public:
-    RectangleRule(const std::array<std::size_t, DIM>& res) : resolution(res) {}
+    RectangleRule(std::size_t s) : steps(s) {}
 
-    // Esta es la función que viltrum::integrate buscará
-    template<typename Bins, std::size_t DIMBINS, typename F, typename Float, typename Logger>
-    void integrate(Bins& bins, const std::array<std::size_t, DIMBINS>& bin_resolution, 
-                   const F& f, const Range<Float, DIM>& range, Logger& logger) const {
+    template<typename Bins, std::size_t DIMBINS, typename F, typename Float, std::size_t DIM, typename Logger>
+    void integrate(Bins& bins, const std::array<std::size_t, DIMBINS>& bin_resolution,
+        const F& f, const Range<Float, DIM>& range, Logger& logger) const {
+
+        // Volumen de la celda diferencial
+        double step_volume = range.volume() / std::pow(static_cast<double>(steps), static_cast<double>(DIM));
         
-        std::array<Float, DIM> step;
-        Float cell_volume = 1.0;
-        unsigned long total_cells = 1;
+        double resolution_factor = 1;
+        for (std::size_t i = 0; i < DIMBINS; ++i) resolution_factor *= bin_resolution[i];
+        double factor = resolution_factor * step_volume;
 
-        for (std::size_t i = 0; i < DIM; ++i) {
-            step[i] = (range.max(i) - range.min(i)) / Float(resolution[i]);
-            cell_volume *= step[i];
-            total_cells *= resolution[i];
-        }
-
-        // El factor de normalización para que la energía sea correcta
-        // En PBRT, si lanzas N muestras, cada una debe valer 1/N
-        Float total_factor = cell_volume; 
-
-        for (unsigned long i = 0; i < total_cells; ++i) {
-            logger.log_progress(i, total_cells);
-            
-            std::array<Float, DIM> sample_point;
-            unsigned long temp_i = i;
-
-            for (std::size_t d = 0; d < DIM; ++d) {
-                std::size_t grid_pos = temp_i % resolution[d];
-                temp_i /= resolution[d];
-                // Punto medio de la celda de la rejilla
-                sample_point[d] = range.min(d) + (Float(grid_pos) + 0.5f) * step[d];
-            }
-
-            // Calculamos a qué píxel (bin) corresponde esta muestra
-            if constexpr (DIMBINS > 0) {
-                std::array<std::size_t, DIMBINS> bin_pos;
-                for (std::size_t d = 0; d < DIMBINS; ++d) {
-                    Float normalized = (sample_point[d] - range.min(d)) / (range.max(d) - range.min(d));
-                    bin_pos[d] = std::min(std::size_t(normalized * bin_resolution[d]), bin_resolution[d] - 1);
+        iterate_grid<DIM>(range, steps, [&](const std::array<Float, DIM>& sample) {
+            // El integrando de PBRT espera que el parámetro sea tratable como secuencia
+            if (range.is_inside(sample)) {
+                std::array<std::size_t, DIMBINS> pos;
+                for (std::size_t i = 0; i < DIMBINS; ++i) {
+                    pos[i] = std::size_t(bin_resolution[i] * (sample[i] - range.min(i)) / (range.max(i) - range.min(i)));
                 }
-                // Llamamos a la lambda bins_accessor del .cc
-                bins(bin_pos) += f(sample_point) * total_factor;
+                // f(sample) invoca el trazador de rayos en ese punto
+                bins(pos) += f(sample) * factor;
+            }
+        });
+    }
+
+private:
+    template<std::size_t DIM, typename Float, typename Callback>
+    void iterate_grid(const Range<Float, DIM>& range, std::size_t steps, Callback cb) const {
+        if (steps == 0) return;
+        std::array<std::size_t, DIM> indices{};
+        std::array<Float, DIM> sample;
+        
+        while (true) {
+            for (std::size_t d = 0; d < DIM; ++d) {
+                Float step_size = (range.max(d) - range.min(d)) / static_cast<Float>(steps);
+                sample[d] = range.min(d) + (static_cast<Float>(indices[d]) + 0.5f) * step_size;
+            }
+            cb(sample);
+
+            std::size_t i = 0;
+            while (++indices[i] == steps) {
+                indices[i] = 0;
+                if (++i == DIM) return; 
             }
         }
     }
 };
 
-template<std::size_t DIM>
-RectangleRule<DIM> rectangle_rule(std::array<std::size_t, DIM> res) {
-    return RectangleRule<DIM>(res);
+inline auto rectangle_rule(std::size_t steps) {
+    return RectangleRule(steps);
 }
 
-} // namespace viltrum
+}
