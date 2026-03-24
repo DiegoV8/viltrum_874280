@@ -50,58 +50,61 @@ public:
 
     template<typename Bins, std::size_t DIMBINS, typename F, typename Float, std::size_t DIM, typename Logger>
     void integrate(Bins& bins, const std::array<std::size_t, DIMBINS>& bin_resolution,
-        const F& f, const Range<Float, DIM>& range, Logger& logger) const {
-
+                   const F& f, const Range<Float, DIM>& range, Logger& logger) const {
+        
         if (steps == 0) return;
 
-        // 1. Calculamos el factor de resolución (igual que en monte-carlo.h)
-        double resolution_factor = 1.0;
-        for (std::size_t i = 0; i < DIMBINS; ++i) resolution_factor *= bin_resolution[i];
-
-        // 2. El factor final: (Resolución * Volumen del rango) / Muestras totales
+        // 1. Número total de muestras en la rejilla
         double n_samples = std::pow(steps, DIM);
+
+        // 2. Calculamos el factor de resolución
+        double resolution_factor = 1.0;
+        for (std::size_t i = 0; i < DIMBINS; ++i) {
+            resolution_factor *= bin_resolution[i];
+        }
+
+        // 3. Factor final (escala de PBRT y Viltrum)
         double factor = (resolution_factor * range.volume()) / n_samples;
+        
+        unsigned long current_sample = 0;
 
-        iterate_grid<DIM>(range, steps, [&](const std::array<Float, DIM>& sample) {
-            std::array<std::size_t, DIMBINS> pos;
-            for (std::size_t i = 0; i < DIMBINS; ++i) {
-                // Si el rango es pequeño (un píxel), la posición es 0 (local al bin)
-                // Si el rango es grande (toda la imagen), calculamos el píxel
-                if (range.max(i) - range.min(i) <= 1.0001) { 
-                    pos[i] = 0; 
-                } else {
-                    double norm = (sample[i] - range.min(i)) / (range.max(i) - range.min(i));
-                    pos[i] = std::min(static_cast<std::size_t>(norm * bin_resolution[i]), bin_resolution[i] - 1);
+        // 4. Llamamos a la función recursiva
+        iterate_recursive<Float, DIM>(range, steps, [&](const std::array<Float, DIM>& sample) {
+            logger.log_progress(current_sample++, static_cast<unsigned long>(n_samples));
+
+            if (range.is_inside(sample)) {
+                std::array<std::size_t, DIMBINS> pos;
+                for (std::size_t i = 0; i < DIMBINS; ++i) {
+                    pos[i] = std::size_t(bin_resolution[i] * (sample[i] - range.min(i)) / (range.max(i) - range.min(i)));
                 }
+                
+                // ---- MODIFICACIÓN AQUÍ ----
+                // Hemos eliminado RectangleSequence. 
+                // Pasamos 'sample' (el std::array crudo) directamente a 'f'.
+                // Fubini pasará este array al Monte Carlo anidado, y será Monte Carlo 
+                // quien genere la secuencia infinita final para PBRT.
+                bins(pos) += f(sample) * factor;
             }
-            
-            // IMPORTANTE: El factor de escala en PBRT con IntegratorPerBin
-            // debe ser 1.0 / muestras_del_pixel. 
-            // Viltrum ya multiplica por 'factor' (resolución total) fuera.
-            double n_samples = std::pow(steps, DIM);
-            double factor = 1.0 / n_samples;
-
-            bins(pos) += f(sample) * factor;
         });
+
+        logger.log_progress(static_cast<unsigned long>(n_samples), static_cast<unsigned long>(n_samples));
     }
 
 private:
-    template<std::size_t DIM, typename Float, typename Callback>
-    void iterate_grid(const Range<Float, DIM>& range, std::size_t steps, Callback cb) const {
-        std::array<std::size_t, DIM> indices{};
-        std::array<Float, DIM> sample;
-        while (true) {
-            for (std::size_t d = 0; d < DIM; ++d) {
-                Float step_size = (range.max(d) - range.min(d)) / static_cast<Float>(steps);
-                sample[d] = range.min(d) + (static_cast<Float>(indices[d]) + 0.5f) * step_size;
-            }
-            cb(sample);
-            std::size_t i = 0;
-            while (true) {
-                if (++indices[i] < steps) break;
-                indices[i] = 0;
-                if (++i == DIM) return;
-            }
+    // La función auxiliar que hace la magia de la rejilla multidimensional
+    template<typename Float, std::size_t DIM, typename Callback>
+    void iterate_recursive(const Range<Float, DIM>& range, std::size_t steps_per_dim, 
+                           Callback cb, std::array<Float, DIM> current_pos = {}, std::size_t depth = 0) const {
+        if (depth == DIM) {
+            cb(current_pos);
+            return;
+        }
+
+        Float step_size = (range.max(depth) - range.min(depth)) / steps_per_dim;
+        for (std::size_t i = 0; i < steps_per_dim; ++i) {
+            // Evaluamos en el punto medio de cada rectángulo
+            current_pos[depth] = range.min(depth) + (i + 0.5f) * step_size;
+            iterate_recursive<Float, DIM>(range, steps_per_dim, cb, current_pos, depth + 1);
         }
     }
 };
