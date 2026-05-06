@@ -20,4 +20,10 @@
 #include "src/control-variates/integrator-adaptive-debug-count-regions.h"
 #include "src/rng/XoshiroCpp.hpp"
 #include "src/rng/pcg_random.hpp"
+#include "src/function-tests/genz-continuous.h" 
+#include "src/function-tests/genz-cornerpeak.h" 
+#include "src/function-tests/genz-discontinuous.h" 
+#include "src/function-tests/genz-gaussianpeak.h" 
+#include "src/function-tests/genz-oscilatory.h" 
+#include "src/function-tests/genz-productpeak.h" 
 

@@ -33,6 +33,11 @@ target_link_libraries(test-region-sample-3d PRIVATE TBB::tbb)
 add_executable(montecarlo-rng main/compilation-tests/montecarlo-rng.cc)
 target_link_libraries(montecarlo-rng PRIVATE TBB::tbb)
 
+# Nuevo test para las funciones de Genz
+find_package(Threads REQUIRED)
+
+add_executable(test-functions-genz main/function-tests/function-test-genz.cc)
+target_link_libraries(test-functions-genz PRIVATE TBB::tbb Threads::Threads)
 
 add_executable(crespo21 main/compilation-tests/crespo21.cc)
 target_compile_options(crespo21 PRIVATE -pg)
