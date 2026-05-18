@@ -13,7 +13,10 @@
 struct SlComparator {
     template<typename T>
     bool operator()(const T& a, const T& b) const {
-        return std::get<0>(a->extra()) < std::get<0>(b->extra());
+        // Para que la Skiplist se comporte como una cola de prioridad de máximos
+        // (extrayendo el mayor error primero desde la cabeza), usamos '>'
+        // Si se usa '<', se extraería el error más pequeño.
+        return std::get<0>(a->extra()) > std::get<0>(b->extra());
     }
 };
 
@@ -30,85 +33,79 @@ public:
         : rule(r), error_heuristic(er), subdivisions(subdivisions) {}
 
     template<std::size_t DIMBINS, typename F, typename Float, std::size_t DIM, typename Logger>
-    auto generate(const std::array<std::size_t,DIMBINS>& bin_resolution,
-        const F& f, const Range<Float,DIM>& range, Logger& logger) const {
+    auto generate(const std::array<std::size_t, DIMBINS>& bin_resolution,
+                const F& f, const Range<Float, DIM>& range, Logger& logger) const {
 
-        // 1. Inicialización de la primera región
+        // 1. Inicialización de la región base
         auto r_init = region(f, rule, range.min(), range.max());
         auto errdim_init = error_heuristic(r_init);
-        using ERegion  = ExtendedRegion<decltype(r_init), decltype(errdim_init)>;
-        using PERegion = std::shared_ptr<ERegion>;
+        
+        // Definimos el tipo de región extendida y el puntero inteligente para la Skiplist
+        using ERegion = ExtendedRegion<decltype(r_init), decltype(errdim_init)>;
+        using ERegionPtr = std::shared_ptr<ERegion>;
 
+        // 2. Configuración de concurrencia
         unsigned int num_threads = std::thread::hardware_concurrency();
         if (num_threads == 0) num_threads = 2;
 
-        // Skiplist con factor de relajación para evitar contención
-        Skiplist<PERegion, SlComparator> sl(SlComparator(), num_threads * 8);
+        // 3. Inicialización de la Skiplist (usando {} para evitar el "most vexing parse")
+        // Se recomienda un factor de relajación para mejorar el rendimiento en entornos concurrentes
+        Skiplist<ERegionPtr, SlComparator> sl{SlComparator(), int(num_threads)*128};
         sl.push(std::make_shared<ERegion>(r_init, errdim_init));
 
-        // 2. Control de terminación concurrente
-        std::atomic<std::size_t> completed_subdivisions{0};
-        std::atomic<int> active_workers{0};
+        // Contador atómico para controlar el número de subdivisiones realizadas
+        std::atomic<std::size_t> done{0};
+        logger.log_progress(std::size_t(0), subdivisions);
 
-        auto worker_task = [&]() {
+        // 4. Definición del Worker para procesamiento paralelo
+        auto worker = [&]() {
             while (true) {
-                // Condición de salida global: ¿se ha alcanzado el objetivo?
-                if (completed_subdivisions.load(std::memory_order_relaxed) >= subdivisions) break;
-
-                auto opt_r = sl.try_pop();
-
-                if (!opt_r) {
-                    // Si la lista está vacía, verificamos si otros hilos aún están procesando.
-                    // Si nadie está trabajando (active_workers == 0), no habrá nuevos datos.
-                    if (active_workers.load(std::memory_order_acquire) == 0 && sl.empty()) {
-                        break; 
-                    }
-                    std::this_thread::yield(); // Espera activa ligera
-                    continue;
-                }
-
-                // Marcamos que este hilo está produciendo nuevas regiones
-                active_workers.fetch_add(1, std::memory_order_acq_rel);
-
-                // Doble comprobación atómica para no exceder las subdivisiones
-                if (completed_subdivisions.fetch_add(1, std::memory_order_acq_rel) >= subdivisions) {
-                    sl.push(*opt_r); // Devolvemos la región si nos pasamos
-                    completed_subdivisions.fetch_sub(1, std::memory_order_relaxed);
-                    active_workers.fetch_sub(1, std::memory_order_release);
+                // Reservamos un slot de trabajo
+                std::size_t my_slot = done.fetch_add(1, std::memory_order_relaxed);
+                if (my_slot >= subdivisions) {
+                    done.fetch_sub(1, std::memory_order_relaxed);
                     break;
                 }
 
-                // 3. Procesamiento de la región (Split)
-                ERegion& current_r = **opt_r;
-                auto subregions = current_r.split(f, std::get<1>(current_r.extra()));
+                // Extracción de la región con mayor error (espera activa si es necesario)
+                std::optional<ERegionPtr> opt_ptr;
+                while (!opt_ptr) {
+                    opt_ptr = sl.try_pop(); //
+                    // Si la cola está vacía pero el trabajo global no ha terminado, reintentamos.
+                    // Si ya se alcanzó el límite de subdivisiones, salimos.
+                    if (!opt_ptr && done.load() >= subdivisions) break;
+                }
 
+                if (!opt_ptr) {
+                    done.fetch_sub(1, std::memory_order_relaxed);
+                    break;
+                }
+
+                // 5. División de la región y actualización de la estructura
+                auto subregions = (*opt_ptr)->split(f, std::get<1>((*opt_ptr)->extra()));
                 for (auto& sr : subregions) {
-                    auto errdim = error_heuristic(sr);
-                    sl.push(std::make_shared<ERegion>(std::move(sr), std::move(errdim)));
+                    sl.push(std::make_shared<ERegion>(sr, error_heuristic(sr))); //
                 }
 
-                active_workers.fetch_sub(1, std::memory_order_release);
-                
-                // Log de progreso solo en un hilo o con muestreo para no saturar la salida
-                if (completed_subdivisions.load() % 10 == 0) {
-                    logger.log_progress(completed_subdivisions.load(), subdivisions);
-                }
+                logger.log_progress(my_slot, subdivisions);
             }
         };
 
-        // 4. Lanzamiento de hilos
+        // 6. Lanzamiento y sincronización de hilos
         std::vector<std::thread> threads;
-        for (unsigned int t = 0; t < num_threads; ++t) {
-            threads.emplace_back(worker_task);
-        }
+        threads.reserve(num_threads);
+        for (unsigned int t = 0; t < num_threads; ++t)
+            threads.emplace_back(worker);
+        
+        for (auto& t : threads)
+            t.join();
 
-        for (auto& t : threads) t.join();
-
-        // 5. Recolección final mediante drain()
+        // 7. Recolección final de resultados
+        // Vaciamos la skiplist y convertimos los shared_ptr de vuelta a objetos ERegion
+        auto final_ptrs = sl.drain(); //
         std::vector<ERegion> final_heap;
-        auto drained_ptrs = sl.drain();
-        final_heap.reserve(drained_ptrs.size());
-        for(auto& ptr : drained_ptrs) {
+        final_heap.reserve(final_ptrs.size());
+        for (auto& ptr : final_ptrs) {
             final_heap.push_back(std::move(*ptr));
         }
 

@@ -82,10 +82,9 @@ public:
         for (auto& t : threads)
             t.join();
 
-        // Volcamos la multiqueue al vector de resultado
+        // Volcamos la multiqueue al vector de resultado sin ordenar, no modificamos el contenido de mq
         std::vector<ERegion> final_heap;
-        while (auto r = mq.try_pop())
-            final_heap.push_back(*r);
+        final_heap = mq.drain();
 
         logger.log_progress(subdivisions, subdivisions);
         return final_heap;
