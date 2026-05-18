@@ -1,0 +1,3 @@
+[submodule "src/relaxedPriorityQueues_874280"]
+    path = src/relaxedPriorityQueues_874280
+    url = https://github.com/DiegoV8/relaxedPriorityQueues_874280.git
