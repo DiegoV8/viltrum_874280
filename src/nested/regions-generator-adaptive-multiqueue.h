@@ -86,12 +86,19 @@ public:
                 auto subregions = opt_r->split(f, std::get<1>(opt_r->extra()));
                 for (auto& sr : subregions)
                     mq.push(ERegion(sr, error_heuristic(sr)));
+
+                #pragma omp critical(logger_update)
+                {
+                    logger.log_progress(my_slot + 1, subdivisions);
+                }
             }
         } // Fin de la región paralela de OpenMP (barrera implícita, todos los hilos coordinados aquí)
 
         // Volcamos la multiqueue al vector de resultado sin ordenar
         std::vector<ERegion> final_heap;
         final_heap = mq.drain();
+
+        logger.log_progress(subdivisions, subdivisions);
 
         return final_heap;
     }
