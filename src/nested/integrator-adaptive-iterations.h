@@ -16,26 +16,25 @@ auto integrator_adaptive_iterations(const R& rule, const EH& error_heuristic, st
     return integrator_region_based(regions_generator_adaptive_heap(rule,error_heuristic,iterations),regions_integrator_sequential());
 }
 
-/*
 // ORIGINAL
 template<typename R, typename EH>
 auto integrator_adaptive_iterations_parallel(const R& rule, const EH& error_heuristic, std::size_t iterations, std::size_t nmutexes=16) {
     return integrator_region_based(regions_generator_adaptive_heap(rule,error_heuristic,iterations),regions_integrator_parallel_regions(nmutexes));
 }
-*/
 
-/*
+
+
 // Multiqueue
 template<typename R, typename EH>
-auto integrator_adaptive_iterations_parallel(const R& rule, const EH& error_heuristic, std::size_t iterations, std::size_t nmutexes=16) {
+auto integrator_adaptive_iterations_parallel_Mq(const R& rule, const EH& error_heuristic, std::size_t iterations, std::size_t nmutexes=16) {
     return integrator_region_based(regions_generator_adaptive_multiqueue(rule,error_heuristic,iterations),regions_integrator_parallel_regions(nmutexes));
 }
-*/
+
 
 
 // Skiplist
 template<typename R, typename EH>
-auto integrator_adaptive_iterations_parallel(const R& rule, const EH& error_heuristic, std::size_t iterations, std::size_t nmutexes=16) {
+auto integrator_adaptive_iterations_parallel_Sl(const R& rule, const EH& error_heuristic, std::size_t iterations, std::size_t nmutexes=16) {
     return integrator_region_based(regions_generator_adaptive_skiplist(rule,error_heuristic,iterations),regions_integrator_parallel_regions(nmutexes));
 }
 

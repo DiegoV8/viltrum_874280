@@ -9,7 +9,20 @@
 struct MqComparator {
     template<typename T>
     bool operator()(const T& a, const T& b) const {
-        return std::get<0>(a.extra()) < std::get<0>(b.extra());
+        auto errA = std::get<0>(a.extra());
+        auto errB = std::get<0>(b.extra());
+        
+        bool nanA = std::isnan(errA);
+        bool nanB = std::isnan(errB);
+        
+        // Si ambos son NaN, son equivalentes (ninguno es menor que el otro)
+        if (nanA && nanB) return false; 
+        
+        // Si solo uno es NaN, lo mandamos al fondo (menor prioridad)
+        if (nanA) return true;  
+        if (nanB) return false;
+        
+        return errA < errB;
     }
 };
 
@@ -46,44 +59,40 @@ public:
 
         logger.log_progress(std::size_t(0), subdivisions);
 
-        auto worker = [&]() {
+        #pragma omp parallel
+        {
             while (true) {
-                // Reservar un slot de trabajo
+                // ¿Queda trabajo por hacer?
+                std::size_t current = completed.load(std::memory_order_relaxed);
+                if (current >= subdivisions) break;
+
+                // Intentar obtener una región de forma segura de nuestra Multiqueue
+                std::optional<ERegion> opt_r = mq.try_pop();
+                if (!opt_r) {
+                    // No hay nada ahora, cedemos el turno brevemente
+                    std::this_thread::yield();
+                    continue;
+                }
+
+                // Reservar el slot DESPUÉS de tener trabajo real
                 std::size_t my_slot = completed.fetch_add(1, std::memory_order_relaxed);
                 if (my_slot >= subdivisions) {
-                    completed.fetch_sub(1, std::memory_order_relaxed);
+                    // Nos pasamos, devolver la región y salir
+                    mq.push(*opt_r);
                     break;
                 }
 
-                // Esperar hasta que haya región disponible
-                std::optional<ERegion> opt_r;
-                while (!opt_r && !stop.load(std::memory_order_relaxed)) {
-                    opt_r = mq.try_pop();
-                }
-
-                if (!opt_r) break;  // stop fue activado
-
+                // ¡Aquí f se ejecuta en paralelo de forma 100% segura bajo OpenMP!
                 auto subregions = opt_r->split(f, std::get<1>(opt_r->extra()));
                 for (auto& sr : subregions)
                     mq.push(ERegion(sr, error_heuristic(sr)));
-
-                logger.log_progress(my_slot, subdivisions);
             }
-        };
+        } // Fin de la región paralela de OpenMP (barrera implícita, todos los hilos coordinados aquí)
 
-        // Lanzar hilos
-        std::vector<std::thread> threads;
-        threads.reserve(num_threads);
-        for (unsigned int t = 0; t < num_threads; ++t)
-            threads.emplace_back(worker);
-        for (auto& t : threads)
-            t.join();
-
-        // Volcamos la multiqueue al vector de resultado sin ordenar, no modificamos el contenido de mq
+        // Volcamos la multiqueue al vector de resultado sin ordenar
         std::vector<ERegion> final_heap;
         final_heap = mq.drain();
 
-        logger.log_progress(subdivisions, subdivisions);
         return final_heap;
     }
 };
