@@ -41,30 +41,27 @@ public:
         mq.push(ERegion(r_init, errdim_init));
 
         // Contador atómico compartido entre todos los hilos
-        std::atomic<std::size_t> done{0};
+        std::atomic<std::size_t> completed{0};  
+        std::atomic<bool> stop{false};
 
         logger.log_progress(std::size_t(0), subdivisions);
 
         auto worker = [&]() {
             while (true) {
-                std::size_t my_slot = done.fetch_add(1, std::memory_order_relaxed);
+                // Reservar un slot de trabajo
+                std::size_t my_slot = completed.fetch_add(1, std::memory_order_relaxed);
                 if (my_slot >= subdivisions) {
-                    done.fetch_sub(1, std::memory_order_relaxed);
+                    completed.fetch_sub(1, std::memory_order_relaxed);
                     break;
                 }
 
-                // Esperar activamente hasta que haya algo, 
-                // pero solo si el trabajo total no ha terminado
+                // Esperar hasta que haya región disponible
                 std::optional<ERegion> opt_r;
-                while (!opt_r) {
+                while (!opt_r && !stop.load(std::memory_order_relaxed)) {
                     opt_r = mq.try_pop();
-                    if (!opt_r && done.load() >= subdivisions) break;
                 }
 
-                if (!opt_r) {
-                    done.fetch_sub(1, std::memory_order_relaxed);
-                    break;
-                }
+                if (!opt_r) break;  // stop fue activado
 
                 auto subregions = opt_r->split(f, std::get<1>(opt_r->extra()));
                 for (auto& sr : subregions)
@@ -74,7 +71,7 @@ public:
             }
         };
 
-        // Lanzamos los hilos
+        // Lanzar hilos
         std::vector<std::thread> threads;
         threads.reserve(num_threads);
         for (unsigned int t = 0; t < num_threads; ++t)
