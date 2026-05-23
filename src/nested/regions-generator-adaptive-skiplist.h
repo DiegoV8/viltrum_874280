@@ -53,56 +53,53 @@ public:
         Skiplist<ERegionPtr, SlComparator> sl{SlComparator(), int(num_threads)*128};
         sl.push(std::make_shared<ERegion>(r_init, errdim_init));
 
-        // Contador atómico para controlar el número de subdivisiones realizadas
-        std::atomic<std::size_t> done{0};
+        // Contador atómico compartido entre todos los hilos
+        std::atomic<std::size_t> completed{0};
+
         logger.log_progress(std::size_t(0), subdivisions);
 
-        // 4. Definición del Worker para procesamiento paralelo
-        auto worker = [&]() {
+        // 4. Región paralela OpenMP — análoga al multiqueue
+        #pragma omp parallel
+        {
             while (true) {
-                // Reservamos un slot de trabajo
-                std::size_t my_slot = done.fetch_add(1, std::memory_order_relaxed);
-                if (my_slot >= subdivisions) {
-                    done.fetch_sub(1, std::memory_order_relaxed);
-                    break;
-                }
+                // ¿Queda trabajo por hacer?
+                std::size_t current = completed.load(std::memory_order_relaxed);
+                if (current >= subdivisions) break;
 
-                // Extracción de la región con mayor error (espera activa si es necesario)
-                std::optional<ERegionPtr> opt_ptr;
-                while (!opt_ptr) {
-                    opt_ptr = sl.try_pop(); //
-                    // Si la cola está vacía pero el trabajo global no ha terminado, reintentamos.
-                    // Si ya se alcanzó el límite de subdivisiones, salimos.
-                    if (!opt_ptr && done.load() >= subdivisions) break;
-                }
-
+                // Intentar obtener una región de forma segura de la Skiplist
+                std::optional<ERegionPtr> opt_ptr = sl.try_pop();
                 if (!opt_ptr) {
-                    done.fetch_sub(1, std::memory_order_relaxed);
+                    // No hay nada ahora, cedemos el turno brevemente
+                    std::this_thread::yield();
+                    continue;
+                }
+
+                // Reservar el slot DESPUÉS de tener trabajo real (evita la race condition
+                // del diseño original que reservaba antes de hacer el pop)
+                std::size_t my_slot = completed.fetch_add(1, std::memory_order_relaxed);
+                if (my_slot >= subdivisions) {
+                    // Nos pasamos: devolver la región y salir
+                    sl.push(*opt_ptr);
                     break;
                 }
 
-                // 5. División de la región y actualización de la estructura
+                // División de la región y actualización de la estructura
+                // f se ejecuta en paralelo de forma segura bajo OpenMP
                 auto subregions = (*opt_ptr)->split(f, std::get<1>((*opt_ptr)->extra()));
                 for (auto& sr : subregions) {
-                    sl.push(std::make_shared<ERegion>(sr, error_heuristic(sr))); //
+                    sl.push(std::make_shared<ERegion>(sr, error_heuristic(sr)));
                 }
 
-                logger.log_progress(my_slot, subdivisions);
+                #pragma omp critical(logger_update)
+                {
+                    logger.log_progress(my_slot + 1, subdivisions);
+                }
             }
-        };
+        } // Fin de la región paralela de OpenMP (barrera implícita)
 
-        // 6. Lanzamiento y sincronización de hilos
-        std::vector<std::thread> threads;
-        threads.reserve(num_threads);
-        for (unsigned int t = 0; t < num_threads; ++t)
-            threads.emplace_back(worker);
-        
-        for (auto& t : threads)
-            t.join();
-
-        // 7. Recolección final de resultados
+        // 5. Recolección final de resultados
         // Vaciamos la skiplist y convertimos los shared_ptr de vuelta a objetos ERegion
-        auto final_ptrs = sl.drain(); //
+        auto final_ptrs = sl.drain();
         std::vector<ERegion> final_heap;
         final_heap.reserve(final_ptrs.size());
         for (auto& ptr : final_ptrs) {

@@ -50,6 +50,14 @@ auto integrator_adaptive_iterations_parallel(const Rule& rule, std::size_t itera
     return integrator_adaptive_iterations_parallel(rule,error_heuristic_default(error_metric_absolute()),iterations);
 }
 
+template<typename Rule>
+auto integrator_adaptive_iterations_parallel_Mq(const Rule& rule, std::size_t iterations) {
+    return integrator_adaptive_iterations_parallel_Mq(rule, error_heuristic_default(error_metric_absolute()), iterations);
+}
 
+template<typename Rule>
+auto integrator_adaptive_iterations_parallel_Sl(const Rule& rule, std::size_t iterations) {
+    return integrator_adaptive_iterations_parallel_Sl(rule, error_heuristic_default(error_metric_absolute()), iterations);
+}
 
 }

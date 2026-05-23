@@ -35,9 +35,11 @@ target_link_libraries(montecarlo-rng PRIVATE TBB::tbb)
 
 # Nuevo test para las funciones de Genz
 find_package(Threads REQUIRED)
+find_package(OpenMP REQUIRED)
 
 add_executable(test-functions-genz main/function-tests/function-test-genz.cc)
-target_link_libraries(test-functions-genz PRIVATE TBB::tbb Threads::Threads)
+target_compile_options(test-functions-genz PRIVATE -g -O0)
+target_link_libraries(test-functions-genz PRIVATE TBB::tbb Threads::Threads OpenMP::OpenMP_CXX)
 
 add_executable(crespo21 main/compilation-tests/crespo21.cc)
 target_compile_options(crespo21 PRIVATE -pg)
