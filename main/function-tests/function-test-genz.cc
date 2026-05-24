@@ -242,6 +242,7 @@ int main(int argc, char* argv[]) {
     case 4:
         std::cout << "Running all tests..." << std::endl;
         run_name = "multiqueue";
+        std::cout << "Tests: " << run_name << std::endl;
         run_test_Mq<GenzContinuous<Dim>, Dim>("Continuous", GenzContinuous<Dim>(a, u), steps, csv_file, run_name);
         run_test_Mq<GenzCornerpeak<Dim>, Dim>("Corner Peak", GenzCornerpeak<Dim>(c), steps, csv_file, run_name);
         run_test_Mq<GenzDiscontinuous<Dim>, Dim>("Discontinuous", GenzDiscontinuous<Dim>(a, u), steps, csv_file, run_name);
@@ -249,6 +250,7 @@ int main(int argc, char* argv[]) {
         run_test_Mq<GenzOscilatory<Dim>, Dim>("Oscillatory", GenzOscilatory<Dim>(w_scalar, a), steps, csv_file, run_name);
         run_test_Mq<GenzProductpeak<Dim>, Dim>("Product Peak", GenzProductpeak<Dim>(w_vec, c), steps, csv_file, run_name);
         run_name = "priorityqueue";
+        std::cout << "Tests: " << run_name << std::endl;
         run_test_Pq<GenzContinuous<Dim>, Dim>("Continuous", GenzContinuous<Dim>(a, u), steps, csv_file, run_name);
         run_test_Pq<GenzCornerpeak<Dim>, Dim>("Corner Peak", GenzCornerpeak<Dim>(c), steps, csv_file, run_name);
         run_test_Pq<GenzDiscontinuous<Dim>, Dim>("Discontinuous", GenzDiscontinuous<Dim>(a, u), steps, csv_file, run_name);
@@ -256,6 +258,7 @@ int main(int argc, char* argv[]) {
         run_test_Pq<GenzOscilatory<Dim>, Dim>("Oscillatory", GenzOscilatory<Dim>(w_scalar, a), steps, csv_file, run_name);
         run_test_Pq<GenzProductpeak<Dim>, Dim>("Product Peak", GenzProductpeak<Dim>(w_vec, c), steps, csv_file, run_name);
         run_name = "skiplist";
+        std::cout << "Tests: " << run_name << std::endl;
         run_test_Sl<GenzContinuous<Dim>, Dim>("Continuous", GenzContinuous<Dim>(a, u), steps, csv_file, run_name);
         run_test_Sl<GenzCornerpeak<Dim>, Dim>("Corner Peak", GenzCornerpeak<Dim>(c), steps, csv_file, run_name);
         run_test_Sl<GenzDiscontinuous<Dim>, Dim>("Discontinuous", GenzDiscontinuous<Dim>(a, u), steps, csv_file, run_name);
