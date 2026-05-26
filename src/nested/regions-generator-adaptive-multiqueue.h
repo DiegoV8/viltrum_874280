@@ -6,6 +6,7 @@
 #include <vector>
 #include "../relaxedPriorityQueues_874280/src/multiqueue/multiqueue.hpp"
 
+// Estructura usada para comparar dos elementos en la estructura.
 struct MqComparator {
     template<typename T>
     bool operator()(const T& a, const T& b) const {
@@ -15,10 +16,8 @@ struct MqComparator {
         bool nanA = std::isnan(errA);
         bool nanB = std::isnan(errB);
         
-        // Si ambos son NaN, son equivalentes (ninguno es menor que el otro)
         if (nanA && nanB) return false; 
         
-        // Si solo uno es NaN, lo mandamos al fondo (menor prioridad)
         if (nanA) return true;  
         if (nanB) return false;
         
@@ -53,7 +52,6 @@ public:
         Multiqueue<ERegion, MqComparator> mq(4 * num_threads, 2, MqComparator());
         mq.push(ERegion(r_init, errdim_init));
 
-        // Contador atómico compartido entre todos los hilos
         std::atomic<std::size_t> completed{0};  
         std::atomic<bool> stop{false};
 
@@ -62,27 +60,21 @@ public:
         #pragma omp parallel
         {
             while (true) {
-                // ¿Queda trabajo por hacer?
                 std::size_t current = completed.load(std::memory_order_relaxed);
                 if (current >= subdivisions) break;
 
-                // Intentar obtener una región de forma segura de nuestra Multiqueue
                 std::optional<ERegion> opt_r = mq.try_pop();
                 if (!opt_r) {
-                    // No hay nada ahora, cedemos el turno brevemente
                     std::this_thread::yield();
                     continue;
                 }
 
-                // Reservar el slot DESPUÉS de tener trabajo real
                 std::size_t my_slot = completed.fetch_add(1, std::memory_order_relaxed);
                 if (my_slot >= subdivisions) {
-                    // Nos pasamos, devolver la región y salir
                     mq.push(*opt_r);
                     break;
                 }
 
-                // ¡Aquí f se ejecuta en paralelo de forma 100% segura bajo OpenMP!
                 auto subregions = opt_r->split(f, std::get<1>(opt_r->extra()));
                 for (auto& sr : subregions)
                     mq.push(ERegion(sr, error_heuristic(sr)));
@@ -92,9 +84,8 @@ public:
                     logger.log_progress(my_slot + 1, subdivisions);
                 }
             }
-        } // Fin de la región paralela de OpenMP (barrera implícita, todos los hilos coordinados aquí)
+        }
 
-        // Volcamos la multiqueue al vector de resultado sin ordenar
         std::vector<ERegion> final_heap;
         final_heap = mq.drain();
 
@@ -110,4 +101,4 @@ auto regions_generator_adaptive_multiqueue(const Rule& r, const ErrorHeuristic& 
     return RegionsGeneratorAdaptiveMq<Rule, ErrorHeuristic>(r, er, subdivisions);
 }
 
-} // namespace viltrum
+}

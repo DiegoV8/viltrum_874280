@@ -10,7 +10,14 @@
 using namespace viltrum;
 using namespace viltrumtest;
 
-// Función genérica para testear cualquier integrando [Priorityqueue]
+/**
+ * @brief Funcion para probar la integración de una función usando Priorityqueue.
+ * @param name Nombre de la función a probar.
+ * @param f Función a integrar.
+ * @param steps Numero de pasos para la integración.
+ * @param file Fichero csv de output.
+ * @param run_name Nombre de la estructura usada.
+ */
 template<typename Function, std::size_t N>
 void run_test_Pq(const std::string& name, const Function& f, const std::vector<std::size_t>& steps, std::ofstream& file, const std::string& run_name) {
     auto range = range_all<N>(0.0f, 1.0f);
@@ -30,7 +37,6 @@ void run_test_Pq(const std::string& name, const Function& f, const std::vector<s
             s
         );
 
-        // Medición de tiempo de ejecución
         auto start = std::chrono::high_resolution_clock::now();
         float result = integrate(integrator, f, range);
         auto end = std::chrono::high_resolution_clock::now();
@@ -53,7 +59,14 @@ void run_test_Pq(const std::string& name, const Function& f, const std::vector<s
     }
 }
 
-// Función genérica para testear cualquier integrando [Priorityqueue]
+/**
+ * @brief Funcion para probar la integración de una función usando Multiqueue.
+ * @param name Nombre de la función a probar.
+ * @param f Función a integrar.
+ * @param steps Numero de pasos para la integración.
+ * @param file Fichero csv de output.
+ * @param run_name Nombre de la estructura usada.
+ */
 template<typename Function, std::size_t N>
 void run_test_Mq(const std::string& name, const Function& f, const std::vector<std::size_t>& steps, std::ofstream& file, const std::string& run_name) {
     auto range = range_all<N>(0.0f, 1.0f);
@@ -73,7 +86,6 @@ void run_test_Mq(const std::string& name, const Function& f, const std::vector<s
             s
         );
 
-        // Medición de tiempo de ejecución
         auto start = std::chrono::high_resolution_clock::now();
         float result = integrate(integrator, f, range);
         auto end = std::chrono::high_resolution_clock::now();
@@ -96,7 +108,14 @@ void run_test_Mq(const std::string& name, const Function& f, const std::vector<s
     }
 }
 
-// Función genérica para testear cualquier integrando [Priorityqueue]
+/**
+ * @brief Funcion para probar la integración de una función usando Skiplist.
+ * @param name Nombre de la función a probar.
+ * @param f Función a integrar.
+ * @param steps Numero de pasos para la integración.
+ * @param file Fichero csv de output.
+ * @param run_name Nombre de la estructura usada.
+ */
 template<typename Function, std::size_t N>
 void run_test_Sl(const std::string& name, const Function& f, const std::vector<std::size_t>& steps, std::ofstream& file, const std::string& run_name) {
     auto range = range_all<N>(0.0f, 1.0f);
@@ -116,7 +135,6 @@ void run_test_Sl(const std::string& name, const Function& f, const std::vector<s
             s
         );
 
-        // Medición de tiempo de ejecución
         auto start = std::chrono::high_resolution_clock::now();
         float result = integrate(integrator, f, range);
         auto end = std::chrono::high_resolution_clock::now();
@@ -137,29 +155,6 @@ void run_test_Sl(const std::string& name, const Function& f, const std::vector<s
                   << "| " << std::setw(15) << error 
                   << "| " << std::setw(15) << duration.count() << std::endl;
     }
-}
-
-// Saca solo el Logger por pantalla y no escribe en csv
-template<typename Function, std::size_t N>
-void run_test_logs(const std::string& name, const Function& f, const std::size_t steps, std::ofstream& file, const std::string& run_name) {
-    auto range = range_all<N>(0.0f, 1.0f);
-    float real_value = f.integral_primary();
-
-    auto integrator = integrator_adaptive_iterations_parallel(
-        nested(simpson, trapezoidal), 
-        steps
-    );
-
-    LoggerProgress log("TEST-FUNCIONES");
-
-    // Medición de tiempo de ejecución
-    auto start = std::chrono::high_resolution_clock::now();
-    float result = integrate(integrator, f, range, log);
-    auto end = std::chrono::high_resolution_clock::now();
-    
-    std::chrono::duration<double, std::milli> duration = end - start;
-
-    std::cout << "TIEMPO FINAL: " << duration.count() << "ms" << std::endl;
 }
 
 int main(int argc, char* argv[]) {
@@ -188,22 +183,19 @@ int main(int argc, char* argv[]) {
         csv_file << "nombre;steps;error_relativo;tiempo_ms\n";
     }
 
-    // Definimos los pasos de subdivisión para todos los tests
     std::vector<std::size_t> steps = {32, 128, 512, 2048, 4096, 8192, 16384, 32768, 65636};
-    const std::size_t Dim = 6; // Dimensiones de Integración
+    const std::size_t Dim = 6;
 
     std::cout << "Hardware concurrency: " 
               << std::thread::hardware_concurrency() 
               << " threads" << std::endl;
 
-    // Parámetros comunes
     std::array<float, Dim> a; a.fill(5.0f);
     std::array<float, Dim> u; u.fill(0.5f);
     std::array<float, Dim> c; c.fill(5.0f);
     std::array<float, Dim> w_vec; w_vec.fill(0.5f);
     float w_scalar = 0.5f;
 
-    // Individual datastructures
     switch (ds)
     {
     case 0:
@@ -239,7 +231,7 @@ int main(int argc, char* argv[]) {
         run_test_Sl<GenzProductpeak<Dim>, Dim>("Product Peak", GenzProductpeak<Dim>(w_vec, c), steps, csv_file, run_name);
         break;
 
-    case 4:
+    case 3:
         std::cout << "Running all tests..." << std::endl;
         run_name = "multiqueue";
         std::cout << "Tests: " << run_name << std::endl;

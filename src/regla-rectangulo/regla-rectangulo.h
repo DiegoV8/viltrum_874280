@@ -13,15 +13,11 @@ template<typename Float, std::size_t DIM>
 struct RectangleSequence {
     std::array<Float, DIM> data;
 
-    // Magia de PBRT: [0] y [1] son la cámara. [2+] son los rebotes de luz.
     Float operator[](std::size_t i) const {
-    // Si la dimensión está dentro de las calculadas por la rejilla (ej. x, y del píxel)
     if (i < DIM) {
         return data[i]; 
     }
     
-    // Para dimensiones extra (rebotes, luces, etc.), usamos el centro (0.5)
-    // Esto equivale a evaluar el "hiper-centro" de la caja en esas dimensiones.
     return static_cast<Float>(0.5);
 }
 
@@ -54,21 +50,17 @@ public:
         
         if (steps == 0) return;
 
-        // 1. Número total de muestras en la rejilla
         double n_samples = std::pow(steps, DIM);
 
-        // 2. Calculamos el factor de resolución
         double resolution_factor = 1.0;
         for (std::size_t i = 0; i < DIMBINS; ++i) {
             resolution_factor *= bin_resolution[i];
         }
 
-        // 3. Factor final (escala de PBRT y Viltrum)
         double factor = (resolution_factor * range.volume()) / n_samples;
         
         unsigned long current_sample = 0;
 
-        // 4. Llamamos a la función recursiva
         iterate_recursive<Float, DIM>(range, steps, [&](const std::array<Float, DIM>& sample) {
             logger.log_progress(current_sample++, static_cast<unsigned long>(n_samples));
 
@@ -77,12 +69,6 @@ public:
                 for (std::size_t i = 0; i < DIMBINS; ++i) {
                     pos[i] = std::size_t(bin_resolution[i] * (sample[i] - range.min(i)) / (range.max(i) - range.min(i)));
                 }
-                
-                // ---- MODIFICACIÓN AQUÍ ----
-                // Hemos eliminado RectangleSequence. 
-                // Pasamos 'sample' (el std::array crudo) directamente a 'f'.
-                // Fubini pasará este array al Monte Carlo anidado, y será Monte Carlo 
-                // quien genere la secuencia infinita final para PBRT.
                 bins(pos) += f(sample) * factor;
             }
         });
@@ -91,7 +77,6 @@ public:
     }
 
 private:
-    // La función auxiliar que hace la magia de la rejilla multidimensional
     template<typename Float, std::size_t DIM, typename Callback>
     void iterate_recursive(const Range<Float, DIM>& range, std::size_t steps_per_dim, 
                            Callback cb, std::array<Float, DIM> current_pos = {}, std::size_t depth = 0) const {
@@ -102,7 +87,6 @@ private:
 
         Float step_size = (range.max(depth) - range.min(depth)) / steps_per_dim;
         for (std::size_t i = 0; i < steps_per_dim; ++i) {
-            // Evaluamos en el punto medio de cada rectángulo
             current_pos[depth] = range.min(depth) + (i + 0.5f) * step_size;
             iterate_recursive<Float, DIM>(range, steps_per_dim, cb, current_pos, depth + 1);
         }
