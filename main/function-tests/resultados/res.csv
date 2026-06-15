@@ -1,325 +1,163 @@
 nombre;steps;error_relativo;tiempo_ms
-multiqueue_Continuous;32;1.66668;25.9729
-multiqueue_Continuous;128;0.0601243;66.3693
-multiqueue_Continuous;512;0.0298474;252.777
-multiqueue_Continuous;2048;0.00905817;954.839
-multiqueue_Continuous;4096;0.00501783;2114.91
-multiqueue_Continuous;8192;0.00318782;4303.37
-multiqueue_Continuous;16384;0.00226754;9567.45
-multiqueue_Continuous;32768;0.00151556;18858.8
-multiqueue_Continuous;65636;0.000742383;37533.7
-multiqueue_Corner Peak;32;12.8465;30.3991
-multiqueue_Corner Peak;128;0.157384;87.9124
-multiqueue_Corner Peak;512;0.0140177;305.104
-multiqueue_Corner Peak;2048;0.00382344;1179.22
-multiqueue_Corner Peak;4096;0.0023433;2331.2
-multiqueue_Corner Peak;8192;0.00144394;4700.65
-multiqueue_Corner Peak;16384;0.000883549;9307.65
-multiqueue_Corner Peak;32768;0.000530294;18651.6
-multiqueue_Corner Peak;65636;0.00035427;37381.5
-multiqueue_Discontinuous;32;35.4731;29.1627
-multiqueue_Discontinuous;128;6.51186;84.5543
-multiqueue_Discontinuous;512;0.00332099;305.501
-multiqueue_Discontinuous;2048;0.000704812;1187.98
-multiqueue_Discontinuous;4096;0.000361642;2320.06
-multiqueue_Discontinuous;8192;0.000246297;4641.04
-multiqueue_Discontinuous;16384;0.000223192;9333.64
-multiqueue_Discontinuous;32768;1.92039e-05;18722.5
-multiqueue_Discontinuous;65636;0.000161983;43365.8
-multiqueue_Gaussian Peak;32;0.210531;30.1532
-multiqueue_Gaussian Peak;128;0.501369;86.7833
-multiqueue_Gaussian Peak;512;0.188633;309.433
-multiqueue_Gaussian Peak;2048;0.0341524;1179.96
-multiqueue_Gaussian Peak;4096;0.0286246;2366.65
-multiqueue_Gaussian Peak;8192;0.00823768;4770.82
-multiqueue_Gaussian Peak;16384;0.00621149;9424.26
-multiqueue_Gaussian Peak;32768;0.00450663;20177.4
-multiqueue_Gaussian Peak;65636;0.00239151;40096
-multiqueue_Oscillatory;32;15.5151;26.1988
-multiqueue_Oscillatory;128;1.37504;82.9748
-multiqueue_Oscillatory;512;1.81857;304.365
-multiqueue_Oscillatory;2048;0.767438;1246.68
-multiqueue_Oscillatory;4096;0.225329;2313.45
-multiqueue_Oscillatory;8192;0.0118589;4638.68
-multiqueue_Oscillatory;16384;0.00503128;9291.03
-multiqueue_Oscillatory;32768;0.00326978;18609.1
-multiqueue_Oscillatory;65636;0.07305;37060.5
-multiqueue_Product Peak;32;0.253405;30.7417
-multiqueue_Product Peak;128;0.254593;82.7575
-multiqueue_Product Peak;512;0.145132;308.381
-multiqueue_Product Peak;2048;0.0550921;1176.42
-multiqueue_Product Peak;4096;0.0382175;2334.29
-multiqueue_Product Peak;8192;0.0331909;4737.99
-multiqueue_Product Peak;16384;0.0300569;9386.95
-multiqueue_Product Peak;32768;0.0274845;18702.9
-multiqueue_Product Peak;65636;0.0243939;37615.3
-priorityqueue_Continuous;32;0.971367;67.0055
-priorityqueue_Continuous;128;0.0590224;216.077
-priorityqueue_Continuous;512;0.029374;852.468
-priorityqueue_Continuous;2048;0.00903688;3411.88
-priorityqueue_Continuous;4096;0.00501498;6707.52
-priorityqueue_Continuous;8192;0.003192;12893
-priorityqueue_Continuous;16384;0.00223456;25400.6
-priorityqueue_Continuous;32768;0.00150425;53684.9
-priorityqueue_Continuous;65636;0.000778684;103881
-priorityqueue_Corner Peak;32;0.131425;53.3433
-priorityqueue_Corner Peak;128;0.0333019;211.208
-priorityqueue_Corner Peak;512;0.0104278;818.831
-priorityqueue_Corner Peak;2048;0.00381353;3256.1
-priorityqueue_Corner Peak;4096;0.00234267;6646.94
-priorityqueue_Corner Peak;8192;0.00144305;13070.4
-priorityqueue_Corner Peak;16384;0.000874849;25986.1
-priorityqueue_Corner Peak;32768;0.000531945;51979.3
-priorityqueue_Corner Peak;65636;0.000329886;103549
-priorityqueue_Discontinuous;32;3.83186;52.0992
-priorityqueue_Discontinuous;128;0.023843;204.56
-priorityqueue_Discontinuous;512;0.0026066;814.151
-priorityqueue_Discontinuous;2048;0.000627753;3338.75
-priorityqueue_Discontinuous;4096;0.000354266;6629.31
-priorityqueue_Discontinuous;8192;0.000235445;12975.3
-priorityqueue_Discontinuous;16384;0.000221424;26013.5
-priorityqueue_Discontinuous;32768;4.1456e-06;51441.1
-priorityqueue_Discontinuous;65636;0.000121442;103130
-priorityqueue_Gaussian Peak;32;0.100213;52.6961
-priorityqueue_Gaussian Peak;128;0.502375;210.165
-priorityqueue_Gaussian Peak;512;0.124298;827.854
-priorityqueue_Gaussian Peak;2048;0.031704;3265.32
-priorityqueue_Gaussian Peak;4096;0.0286125;6543.96
-priorityqueue_Gaussian Peak;8192;0.00794587;13525.9
-priorityqueue_Gaussian Peak;16384;0.00619796;26120.6
-priorityqueue_Gaussian Peak;32768;0.00451439;51963
-priorityqueue_Gaussian Peak;65636;0.0024108;103779
-priorityqueue_Oscillatory;32;6.08621;52.6151
-priorityqueue_Oscillatory;128;0.2534;208.229
-priorityqueue_Oscillatory;512;0.025904;853.161
-priorityqueue_Oscillatory;2048;0.00758371;3256.87
-priorityqueue_Oscillatory;4096;0.00736743;6446.71
-priorityqueue_Oscillatory;8192;0.00286581;12915.7
-priorityqueue_Oscillatory;16384;0.00284159;25469.2
-priorityqueue_Oscillatory;32768;0.00577916;51427.7
-priorityqueue_Oscillatory;65636;0.0658871;103011
-priorityqueue_Product Peak;32;0.11364;53.399
-priorityqueue_Product Peak;128;0.25116;209.719
-priorityqueue_Product Peak;512;0.144563;820.231
-priorityqueue_Product Peak;2048;0.0544186;3285.26
-priorityqueue_Product Peak;4096;0.0382136;6461.25
-priorityqueue_Product Peak;8192;0.033207;12934.9
-priorityqueue_Product Peak;16384;0.0300386;25997.1
-priorityqueue_Product Peak;32768;0.0274363;51765.5
-priorityqueue_Product Peak;65636;0.024509;103566
-skiplist_Continuous;32;0.971367;19.7575
-skiplist_Continuous;128;0.0590213;72.2855
-skiplist_Continuous;512;0.0293747;270.192
-skiplist_Continuous;2048;0.0116607;1049.22
-skiplist_Continuous;4096;0.00624943;2142.29
-skiplist_Continuous;8192;0.00337132;4526.54
-skiplist_Continuous;16384;0.00228702;9910.62
-skiplist_Continuous;32768;0.00145711;24904.4
-skiplist_Continuous;65636;0.00100961;66768.7
-skiplist_Corner Peak;32;2.09389;28.3378
-skiplist_Corner Peak;128;0.0333022;83.5623
-skiplist_Corner Peak;512;0.0104289;307.759
-skiplist_Corner Peak;2048;0.00458913;1194.79
-skiplist_Corner Peak;4096;0.0027859;2400.02
-skiplist_Corner Peak;8192;0.00154827;4907.46
-skiplist_Corner Peak;16384;0.000872817;10522.6
-skiplist_Corner Peak;32768;0.000566744;25162.6
-skiplist_Corner Peak;65636;0.000318392;70455.9
-skiplist_Discontinuous;32;9.95944;26.6015
-skiplist_Discontinuous;128;0.0265627;85.0166
-skiplist_Discontinuous;512;0.00261642;302.491
-skiplist_Discontinuous;2048;0.000848872;1193.61
-skiplist_Discontinuous;4096;0.000436141;2385.46
-skiplist_Discontinuous;8192;0.000251784;4795.9
-skiplist_Discontinuous;16384;0.00023002;10519.9
-skiplist_Discontinuous;32768;8.04733e-06;25222.2
-skiplist_Discontinuous;65636;0.000113577;39697
-skiplist_Gaussian Peak;32;0.100213;26.2849
-skiplist_Gaussian Peak;128;0.504388;84.2283
-skiplist_Gaussian Peak;512;0.124299;311.974
-skiplist_Gaussian Peak;2048;0.0904717;1203.36
-skiplist_Gaussian Peak;4096;0.0533673;2480.94
-skiplist_Gaussian Peak;8192;0.01364;4823.98
-skiplist_Gaussian Peak;16384;0.00613986;10289.6
-skiplist_Gaussian Peak;32768;0.00468905;25528.4
-skiplist_Gaussian Peak;65636;0.00240669;72758.1
-skiplist_Oscillatory;32;6.48973;26.0169
-skiplist_Oscillatory;128;0.25344;83.5589
-skiplist_Oscillatory;512;0.0260834;304.397
-skiplist_Oscillatory;2048;2.27849;1187.12
-skiplist_Oscillatory;4096;0.205994;2381.96
-skiplist_Oscillatory;8192;0.137138;4841.51
-skiplist_Oscillatory;16384;0.0119589;10479.1
-skiplist_Oscillatory;32768;0.0395404;19386.8
-skiplist_Oscillatory;65636;0.0311029;69699.2
-skiplist_Product Peak;32;0.11364;28.7672
-skiplist_Product Peak;128;0.0277481;87.6821
-skiplist_Product Peak;512;0.144564;316.411
-skiplist_Product Peak;2048;0.0689472;1199.43
-skiplist_Product Peak;4096;0.0438559;2398.05
-skiplist_Product Peak;8192;0.0338211;4956.16
-skiplist_Product Peak;16384;0.0298137;10459.2
-skiplist_Product Peak;32768;0.0275189;25300.9
-skiplist_Product Peak;65636;0.0243123;67390.9
-multiqueue_Continuous;32;1.39813;27.8809
-multiqueue_Continuous;128;0.0598507;59.413
-multiqueue_Continuous;512;0.0297792;204.791
-multiqueue_Continuous;2048;0.00903916;806.121
-multiqueue_Continuous;4096;0.00502116;1637.23
-multiqueue_Continuous;8192;0.00318905;3472.27
-multiqueue_Continuous;16384;0.00225746;7837.82
-multiqueue_Continuous;32768;0.00150767;20855.7
-multiqueue_Continuous;65636;0.000786287;48356.7
-multiqueue_Corner Peak;32;3.66408;38.7884
-multiqueue_Corner Peak;128;0.147127;121.074
-multiqueue_Corner Peak;512;0.0105558;414.103
-multiqueue_Corner Peak;2048;0.00382185;1717.07
-multiqueue_Corner Peak;4096;0.00234432;2869.95
-multiqueue_Corner Peak;8192;0.00144102;5813.53
-multiqueue_Corner Peak;16384;0.000879993;14428.4
-multiqueue_Corner Peak;32768;0.000522801;28798.3
-multiqueue_Corner Peak;65636;0.000364875;45888.5
-multiqueue_Discontinuous;32;28.3503;28.2087
-multiqueue_Discontinuous;128;1.80729;91.0823
-multiqueue_Discontinuous;512;0.00356613;432.434
-multiqueue_Discontinuous;2048;0.000702374;1271.68
-multiqueue_Discontinuous;4096;0.000367007;2883.46
-multiqueue_Discontinuous;8192;0.000250443;5961.65
-multiqueue_Discontinuous;16384;0.000216668;11260.3
-multiqueue_Discontinuous;32768;2.35324e-05;21628.6
-multiqueue_Discontinuous;65636;0.000157106;44433.6
-multiqueue_Gaussian Peak;32;0.106949;26.4793
-multiqueue_Gaussian Peak;128;0.513665;83.1879
-multiqueue_Gaussian Peak;512;0.173897;319.784
-multiqueue_Gaussian Peak;2048;0.0338152;1243.42
-multiqueue_Gaussian Peak;4096;0.0286341;2516.45
-multiqueue_Gaussian Peak;8192;0.00831155;4865.87
-multiqueue_Gaussian Peak;16384;0.00621137;9429.55
-multiqueue_Gaussian Peak;32768;0.00450674;18516.1
-multiqueue_Gaussian Peak;65636;0.00238516;36644.9
-multiqueue_Oscillatory;32;13.2657;30.3708
-multiqueue_Oscillatory;128;0.713752;91.9407
-multiqueue_Oscillatory;512;1.4336;306.048
-multiqueue_Oscillatory;2048;0.843008;1248
-multiqueue_Oscillatory;4096;0.2389;2268.51
-multiqueue_Oscillatory;8192;0.0109122;4445.61
-multiqueue_Oscillatory;16384;0.00501489;8906.09
-multiqueue_Oscillatory;32768;0.00348809;17879
-multiqueue_Oscillatory;65636;0.0736524;35941.5
-multiqueue_Product Peak;32;0.226271;26.2446
-multiqueue_Product Peak;128;0.253547;78.9797
-multiqueue_Product Peak;512;0.145614;299.156
-multiqueue_Product Peak;2048;0.0554817;1145.66
-multiqueue_Product Peak;4096;0.0382215;2259.11
-multiqueue_Product Peak;8192;0.0331921;4518.17
-multiqueue_Product Peak;16384;0.0300621;9031.79
-multiqueue_Product Peak;32768;0.0274949;18183.7
-multiqueue_Product Peak;65636;0.024391;36195.3
-priorityqueue_Continuous;32;0.971367;65.9016
-priorityqueue_Continuous;128;0.0590215;213.124
-priorityqueue_Continuous;512;0.0293732;832.337
-priorityqueue_Continuous;2048;0.00903327;3283.39
-priorityqueue_Continuous;4096;0.0050222;6424.14
-priorityqueue_Continuous;8192;0.00319656;12491.3
-priorityqueue_Continuous;16384;0.00224577;24734.1
-priorityqueue_Continuous;32768;0.00145074;49534.4
-priorityqueue_Continuous;65636;0.00087191;98678.8
-priorityqueue_Corner Peak;32;0.131425;49.9701
-priorityqueue_Corner Peak;128;0.0333019;200.004
-priorityqueue_Corner Peak;512;0.0104285;784.381
-priorityqueue_Corner Peak;2048;0.0038136;3108.41
-priorityqueue_Corner Peak;4096;0.00234216;6260.47
-priorityqueue_Corner Peak;8192;0.00144509;12430.3
-priorityqueue_Corner Peak;16384;0.000880564;24805.9
-priorityqueue_Corner Peak;32768;0.000537025;49500.2
-priorityqueue_Corner Peak;65636;0.000361128;99460.3
-priorityqueue_Discontinuous;32;3.83186;49.3254
-priorityqueue_Discontinuous;128;0.0238432;199.287
-priorityqueue_Discontinuous;512;0.0026063;783.447
-priorityqueue_Discontinuous;2048;0.00062885;3137.06
-priorityqueue_Discontinuous;4096;0.000356155;6258.06
-priorityqueue_Discontinuous;8192;0.000242213;12436.6
-priorityqueue_Discontinuous;16384;0.000221972;24872.9
-priorityqueue_Discontinuous;32768;3.05433e-05;49758.5
-priorityqueue_Discontinuous;65636;0.000189966;99923.6
-priorityqueue_Gaussian Peak;32;0.100213;55.2854
-priorityqueue_Gaussian Peak;128;0.502374;205.229
-priorityqueue_Gaussian Peak;512;0.124298;796.02
-priorityqueue_Gaussian Peak;2048;0.0317022;3182.18
-priorityqueue_Gaussian Peak;4096;0.0286175;6333.22
-priorityqueue_Gaussian Peak;8192;0.00795117;12619
-priorityqueue_Gaussian Peak;16384;0.00622278;25106.4
-priorityqueue_Gaussian Peak;32768;0.0044864;50006.9
-priorityqueue_Gaussian Peak;65636;0.00239728;99822.4
-priorityqueue_Oscillatory;32;6.0862;50.5994
-priorityqueue_Oscillatory;128;0.253387;201.509
-priorityqueue_Oscillatory;512;0.026028;782.884
-priorityqueue_Oscillatory;2048;0.00816905;3117.95
-priorityqueue_Oscillatory;4096;0.00809637;6211.5
-priorityqueue_Oscillatory;8192;0.00314835;12511.1
-priorityqueue_Oscillatory;16384;0.00275212;24973.5
-priorityqueue_Oscillatory;32768;0.00197443;49598.7
-priorityqueue_Oscillatory;65636;0.064801;101468
-priorityqueue_Product Peak;32;0.113639;61.2049
-priorityqueue_Product Peak;128;0.25116;246.533
-priorityqueue_Product Peak;512;0.144565;957.316
-priorityqueue_Product Peak;2048;0.0544126;3500.28
-priorityqueue_Product Peak;4096;0.0382161;6591.84
-priorityqueue_Product Peak;8192;0.0332044;13658.3
-priorityqueue_Product Peak;16384;0.0300511;26621.1
-priorityqueue_Product Peak;32768;0.027453;53657.2
-priorityqueue_Product Peak;65636;0.0243654;106054
-skiplist_Continuous;32;0.971367;19.7477
-skiplist_Continuous;128;0.0590203;67.6067
-skiplist_Continuous;512;0.0293748;265.249
-skiplist_Continuous;2048;0.0116833;1065.87
-skiplist_Continuous;4096;0.00600729;2125.3
-skiplist_Continuous;8192;0.00331953;4640.9
-skiplist_Continuous;16384;0.00227903;10183.9
-skiplist_Continuous;32768;0.0014249;25804
-skiplist_Continuous;65636;0.000895953;77366.9
-skiplist_Corner Peak;32;2.10185;26.0417
-skiplist_Corner Peak;128;0.0334137;78.8292
-skiplist_Corner Peak;512;0.0104286;301.603
-skiplist_Corner Peak;2048;0.00459808;1177
-skiplist_Corner Peak;4096;0.00282877;2401.86
-skiplist_Corner Peak;8192;0.00150376;4937.51
-skiplist_Corner Peak;16384;0.000850147;10170
-skiplist_Corner Peak;32768;0.000551376;25499.5
-skiplist_Corner Peak;65636;0.00034665;71438.5
-skiplist_Discontinuous;32;11.9331;24.4878
-skiplist_Discontinuous;128;0.0261629;117.872
-skiplist_Discontinuous;512;0.00262105;319.444
-skiplist_Discontinuous;2048;0.000901301;1206.64
-skiplist_Discontinuous;4096;0.000484486;2454.65
-skiplist_Discontinuous;8192;0.000289094;4930.53
-skiplist_Discontinuous;16384;0.000182772;10877.3
-skiplist_Discontinuous;32768;6.18791e-05;25665.7
-skiplist_Discontinuous;65636;0.000196245;40195.5
-skiplist_Gaussian Peak;32;0.100213;27.1915
-skiplist_Gaussian Peak;128;0.504181;92.0595
-skiplist_Gaussian Peak;512;0.124299;322.47
-skiplist_Gaussian Peak;2048;0.0912099;1251.72
-skiplist_Gaussian Peak;4096;0.0513761;2449.83
-skiplist_Gaussian Peak;8192;0.0136588;4929.03
-skiplist_Gaussian Peak;16384;0.00616303;10847
-skiplist_Gaussian Peak;32768;0.00462495;24338.7
-skiplist_Gaussian Peak;65636;0.00240845;77160.3
-skiplist_Oscillatory;32;6.48974;25.0591
-skiplist_Oscillatory;128;0.253388;82.066
-skiplist_Oscillatory;512;0.0262394;294.57
-skiplist_Oscillatory;2048;1.98801;1191.18
-skiplist_Oscillatory;4096;0.197574;2571.88
-skiplist_Oscillatory;8192;0.0623655;4974.99
-skiplist_Oscillatory;16384;0.016456;9717.03
-skiplist_Oscillatory;32768;0.0313299;25275
-skiplist_Oscillatory;65636;0.0151951;68762.2
-skiplist_Product Peak;32;0.11364;25.7408
-skiplist_Product Peak;128;0.251159;82.5296
-skiplist_Product Peak;512;0.144564;315.789
-skiplist_Product Peak;2048;0.0683074;1259.65
-skiplist_Product Peak;4096;0.0440555;2429.62
-skiplist_Product Peak;8192;0.0338248;4874.51
-skiplist_Product Peak;16384;0.0298093;10644
-skiplist_Product Peak;32768;0.0273881;26067.8
-skiplist_Product Peak;65636;0.0242629;72261.7
+multiqueue_Continuous;32;1.21009;22.0493
+multiqueue_Continuous;128;0.0602452;59.3258
+multiqueue_Continuous;512;0.0301436;218.256
+multiqueue_Continuous;2048;0.00903508;788.416
+multiqueue_Continuous;4096;0.00501716;1623.76
+multiqueue_Continuous;8192;0.00318696;3339.07
+multiqueue_Continuous;16384;0.00224577;6918.29
+multiqueue_Continuous;32768;0.00151128;16267.7
+multiqueue_Continuous;65636;0.000727463;38248.9
+multiqueue_Corner Peak;32;6.43265;27.7406
+multiqueue_Corner Peak;128;0.392166;85.84
+multiqueue_Corner Peak;512;0.0107653;313.494
+multiqueue_Corner Peak;2048;0.00382693;1155.01
+multiqueue_Corner Peak;4096;0.00234381;2333.05
+multiqueue_Corner Peak;8192;0.00144229;4736.93
+multiqueue_Corner Peak;16384;0.000883549;9626.49
+multiqueue_Corner Peak;32768;0.000526294;19609.4
+multiqueue_Corner Peak;65636;0.000360366;40017.4
+multiqueue_Discontinuous;32;36.3532;25.9085
+multiqueue_Discontinuous;128;2.8303;81.6543
+multiqueue_Discontinuous;512;0.00377463;315.877
+multiqueue_Discontinuous;2048;0.00070152;1303.81
+multiqueue_Discontinuous;4096;0.000366397;2463.06
+multiqueue_Discontinuous;8192;0.000247029;4818.05
+multiqueue_Discontinuous;16384;0.000215449;9805.75
+multiqueue_Discontinuous;32768;2.54832e-05;19597.2
+multiqueue_Discontinuous;65636;0.0001365;37479.9
+multiqueue_Gaussian Peak;32;0.106949;25.7694
+multiqueue_Gaussian Peak;128;0.514183;81.413
+multiqueue_Gaussian Peak;512;0.190856;302.853
+multiqueue_Gaussian Peak;2048;0.0344248;1247.08
+multiqueue_Gaussian Peak;4096;0.0286448;2463.76
+multiqueue_Gaussian Peak;8192;0.00838729;4721.14
+multiqueue_Gaussian Peak;16384;0.00620831;9457.89
+multiqueue_Gaussian Peak;32768;0.00448722;18718.8
+multiqueue_Gaussian Peak;65636;0.00240916;37369
+multiqueue_Oscillatory;32;12.5959;26.0564
+multiqueue_Oscillatory;128;11.2222;88.7752
+multiqueue_Oscillatory;512;2.00994;298.88
+multiqueue_Oscillatory;2048;0.764585;1146.61
+multiqueue_Oscillatory;4096;0.202065;2258.58
+multiqueue_Oscillatory;8192;0.00531504;4654.9
+multiqueue_Oscillatory;16384;0.00926267;9253.62
+multiqueue_Oscillatory;32768;0.00285859;18693.5
+multiqueue_Oscillatory;65636;0.0730032;40275
+multiqueue_Product Peak;32;0.21168;27.8513
+multiqueue_Product Peak;128;0.252565;94.7574
+multiqueue_Product Peak;512;0.145457;316.718
+multiqueue_Product Peak;2048;0.0553237;1204.77
+multiqueue_Product Peak;4096;0.0382198;2354.03
+multiqueue_Product Peak;8192;0.0331917;4964.58
+multiqueue_Product Peak;16384;0.0300579;10481.6
+multiqueue_Product Peak;32768;0.0274788;19772.7
+multiqueue_Product Peak;65636;0.024377;39291.1
+priorityqueue_Continuous;32;0.971367;75.4204
+priorityqueue_Continuous;128;0.0590219;241.093
+priorityqueue_Continuous;512;0.0293736;917.565
+priorityqueue_Continuous;2048;0.00903574;3462.06
+priorityqueue_Continuous;4096;0.00501659;6874.39
+priorityqueue_Continuous;8192;0.00319352;13545.4
+priorityqueue_Continuous;16384;0.00224957;26830.5
+priorityqueue_Continuous;32768;0.00145844;52645.6
+priorityqueue_Continuous;65636;0.000846917;111257
+priorityqueue_Corner Peak;32;0.131425;53.1187
+priorityqueue_Corner Peak;128;0.033302;213.69
+priorityqueue_Corner Peak;512;0.0104278;890.865
+priorityqueue_Corner Peak;2048;0.0038148;3463.86
+priorityqueue_Corner Peak;4096;0.00234095;6591.72
+priorityqueue_Corner Peak;8192;0.00144502;13103.9
+priorityqueue_Corner Peak;16384;0.000862212;30194.5
+priorityqueue_Corner Peak;32768;0.000526421;53303.9
+priorityqueue_Corner Peak;65636;0.000362271;108018
+priorityqueue_Discontinuous;32;3.83186;54.2737
+priorityqueue_Discontinuous;128;0.0238432;231.283
+priorityqueue_Discontinuous;512;0.00260587;875.66
+priorityqueue_Discontinuous;2048;0.000631472;3343.64
+priorityqueue_Discontinuous;4096;0.000357375;6768.53
+priorityqueue_Discontinuous;8192;0.000247699;13668.3
+priorityqueue_Discontinuous;16384;0.000220265;26775.1
+priorityqueue_Discontinuous;32768;4.87717e-07;53850.6
+priorityqueue_Discontinuous;65636;6.68782e-05;110293
+priorityqueue_Gaussian Peak;32;0.100213;54.0736
+priorityqueue_Gaussian Peak;128;0.502374;207.666
+priorityqueue_Gaussian Peak;512;0.124299;849.4
+priorityqueue_Gaussian Peak;2048;0.031704;3603.13
+priorityqueue_Gaussian Peak;4096;0.0286133;7310.58
+priorityqueue_Gaussian Peak;8192;0.00795411;14379.6
+priorityqueue_Gaussian Peak;16384;0.00619032;27808.4
+priorityqueue_Gaussian Peak;32768;0.00447875;55074.2
+priorityqueue_Gaussian Peak;65636;0.0023794;109837
+priorityqueue_Oscillatory;32;6.08619;54.2659
+priorityqueue_Oscillatory;128;0.253392;216.331
+priorityqueue_Oscillatory;512;0.0260851;853.91
+priorityqueue_Oscillatory;2048;0.00857901;3297.48
+priorityqueue_Oscillatory;4096;0.00734005;6838.19
+priorityqueue_Oscillatory;8192;0.00528542;13352.4
+priorityqueue_Oscillatory;16384;0.00401959;26228
+priorityqueue_Oscillatory;32768;7.54188e-05;52549.9
+priorityqueue_Oscillatory;65636;0.0741544;108766
+priorityqueue_Product Peak;32;0.11364;53.7055
+priorityqueue_Product Peak;128;0.25116;211.452
+priorityqueue_Product Peak;512;0.144563;828.492
+priorityqueue_Product Peak;2048;0.0544174;3509.58
+priorityqueue_Product Peak;4096;0.0382118;6783.63
+priorityqueue_Product Peak;8192;0.0331843;13662.8
+priorityqueue_Product Peak;16384;0.0300473;27011.6
+priorityqueue_Product Peak;32768;0.0274817;55976.7
+priorityqueue_Product Peak;65636;0.024344;105023
+skiplist_Continuous;32;0.971367;19.2942
+skiplist_Continuous;128;0.0590224;76.2498
+skiplist_Continuous;512;0.0293715;261.239
+skiplist_Continuous;2048;0.0116245;1019.83
+skiplist_Continuous;4096;0.00604844;2079.28
+skiplist_Continuous;8192;0.00332894;4259.84
+skiplist_Continuous;16384;0.00230517;9653.25
+skiplist_Continuous;32768;0.00131732;24227.9
+skiplist_Continuous;65636;0.000666548;76629.4
+skiplist_Corner Peak;32;2.09366;35.497
+skiplist_Corner Peak;128;0.0339322;104.134
+skiplist_Corner Peak;512;0.010427;364.986
+skiplist_Corner Peak;2048;0.00459034;1336.57
+skiplist_Corner Peak;4096;0.00279016;3013.19
+skiplist_Corner Peak;8192;0.0015404;4940.42
+skiplist_Corner Peak;16384;0.000903996;10427.1
+skiplist_Corner Peak;32768;0.000488701;26688.1
+skiplist_Corner Peak;65636;0.000413961;78582.1
+skiplist_Discontinuous;32;9.28129;36.8534
+skiplist_Discontinuous;128;0.0265042;91.9125
+skiplist_Discontinuous;512;0.00262081;349.343
+skiplist_Discontinuous;2048;0.000871002;1447.17
+skiplist_Discontinuous;4096;0.000422485;2801.34
+skiplist_Discontinuous;8192;0.000281413;5215.58
+skiplist_Discontinuous;16384;0.000220265;12502.3
+skiplist_Discontinuous;32768;7.4072e-05;26369.2
+skiplist_Discontinuous;65636;0.000246846;71762.2
+skiplist_Gaussian Peak;32;0.100213;25.0705
+skiplist_Gaussian Peak;128;0.504388;90.5676
+skiplist_Gaussian Peak;512;0.124299;317.678
+skiplist_Gaussian Peak;2048;0.0923921;1216.88
+skiplist_Gaussian Peak;4096;0.0502478;2518.79
+skiplist_Gaussian Peak;8192;0.0136965;4978.53
+skiplist_Gaussian Peak;16384;0.00610728;10919
+skiplist_Gaussian Peak;32768;0.00466964;26850.6
+skiplist_Gaussian Peak;65636;0.00240198;77752.9
+skiplist_Oscillatory;32;6.48973;25.7444
+skiplist_Oscillatory;128;0.253405;85.0976
+skiplist_Oscillatory;512;0.0266159;307.713
+skiplist_Oscillatory;2048;0.445019;1176.58
+skiplist_Oscillatory;4096;0.839775;2397.12
+skiplist_Oscillatory;8192;0.0673723;4812.56
+skiplist_Oscillatory;16384;0.027197;9465.64
+skiplist_Oscillatory;32768;0.00791734;25037.3
+skiplist_Oscillatory;65636;0.0302019;72748.6
+skiplist_Product Peak;32;0.11364;35.7416
+skiplist_Product Peak;128;0.25116;92.2502
+skiplist_Product Peak;512;0.144565;324.388
+skiplist_Product Peak;2048;0.0688902;1295.42
+skiplist_Product Peak;4096;0.0430405;2446.73
+skiplist_Product Peak;8192;0.0339956;5272.55
+skiplist_Product Peak;16384;0.0297859;11547.7
+skiplist_Product Peak;32768;0.0273459;24965.9
+skiplist_Product Peak;65636;0.0242522;73018.3
