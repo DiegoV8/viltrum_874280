@@ -32,7 +32,7 @@ void run_test_Pq(const std::string& name, const Function& f, const std::vector<s
     std::cout << "-----------------------------------------------------------------------" << std::endl;
 
     for (auto s : steps) {
-        auto integrator = integrator_adaptive_iterations_parallel(
+        auto integrator = integrator_adaptive_iterations_parallel_Pq(
             nested(simpson, trapezoidal), 
             s
         );
