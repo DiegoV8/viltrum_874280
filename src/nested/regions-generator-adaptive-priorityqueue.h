@@ -1,27 +1,82 @@
 #pragma once
 #include "nested.h"
 #include "error-heuristic.h"
-#include <thread>
-#include <atomic>
+#include <mutex>
+#include <optional>
+#include <queue>
 #include <vector>
-#include "../relaxedPriorityQueues_874280/src/multiqueue/multiqueue.hpp"
 
-// Estructura usada para comparar dos elementos en la estructura.
+// Adaptador para la Priority Queue con soporte thread-safe.
+template <typename T, typename Comparator = std::less<T>>
+class HeapAdapter {
+private:
+    std::priority_queue<T, std::vector<T>, Comparator> pq;
+    mutable std::mutex mtx;
+
+public:
+    using value_type = T;
+
+    void push(T val) {
+        std::lock_guard<std::mutex> lock(mtx);
+        pq.push(std::move(val));
+    }
+
+    void pop() {
+        std::lock_guard<std::mutex> lock(mtx);
+        if (!pq.empty())
+            pq.pop();
+    }
+
+    T top() {
+        std::lock_guard<std::mutex> lock(mtx);
+        if (!pq.empty())
+            return pq.top();
+        return T();
+    }
+
+    bool empty() const {
+        std::lock_guard<std::mutex> lock(mtx);
+        return pq.empty();
+    }
+
+    std::optional<T> try_pop() {
+        std::lock_guard<std::mutex> lock(mtx);
+        if (!pq.empty()) {
+            auto val = pq.top();
+            pq.pop();
+            return val;
+        }
+        return std::nullopt;
+    }
+
+    // Vuelca todo el contenido de la PQ a un vector y la deja vacía.
+    std::vector<T> drain() {
+        std::lock_guard<std::mutex> lock(mtx);
+        std::vector<T> result;
+        result.reserve(pq.size());
+        while (!pq.empty()) {
+            result.push_back(pq.top());
+            pq.pop();
+        }
+        return result;
+    }
+};
+
+// Comparador: ordena por error descendente (mayor error = mayor prioridad).
 struct PqComparator {
     template<typename T>
     bool operator()(const T& a, const T& b) const {
         auto errA = std::get<0>(a.extra());
         auto errB = std::get<0>(b.extra());
-        
+
         bool nanA = std::isnan(errA);
         bool nanB = std::isnan(errB);
-        
-        if (nanA && nanB) return false; 
-        
-        if (nanA) return true;  
+
+        if (nanA && nanB) return false;
+        if (nanA) return true;
         if (nanB) return false;
-        
-        return errA < errB;
+
+        return errA < errB; // max-heap: mayor error tiene prioridad
     }
 };
 
@@ -46,14 +101,10 @@ public:
         auto errdim_init = error_heuristic(r_init);
         using ERegion = ExtendedRegion<decltype(r_init), decltype(errdim_init)>;
 
-        unsigned int num_threads = std::thread::hardware_concurrency();
-        if (num_threads == 0) num_threads = 2;
+        HeapAdapter<ERegion, PqComparator> heap;
+        heap.push(ERegion(r_init, errdim_init));
 
-        Multiqueue<ERegion, PqComparator> mq(1, 1, PqComparator()); // Equivalente a una cola
-        mq.push(ERegion(r_init, errdim_init));
-
-        std::atomic<std::size_t> completed{0};  
-        std::atomic<bool> stop{false};
+        std::atomic<std::size_t> completed{0};
 
         logger.log_progress(std::size_t(0), subdivisions);
 
@@ -63,21 +114,18 @@ public:
                 std::size_t current = completed.load(std::memory_order_relaxed);
                 if (current >= subdivisions) break;
 
-                std::optional<ERegion> opt_r = mq.try_pop();
-                if (!opt_r) {
-                    std::this_thread::yield();
-                    continue;
-                }
+                std::optional<ERegion> opt_r = heap.try_pop();
+                if (!opt_r) continue;
 
                 std::size_t my_slot = completed.fetch_add(1, std::memory_order_relaxed);
                 if (my_slot >= subdivisions) {
-                    mq.push(*opt_r);
+                    heap.push(*opt_r);
                     break;
                 }
 
                 auto subregions = opt_r->split(f, std::get<1>(opt_r->extra()));
                 for (auto& sr : subregions)
-                    mq.push(ERegion(sr, error_heuristic(sr)));
+                    heap.push(ERegion(sr, error_heuristic(sr)));
 
                 #pragma omp critical(logger_update)
                 {
@@ -86,19 +134,16 @@ public:
             }
         }
 
-        std::vector<ERegion> final_heap;
-        final_heap = mq.drain();
-
         logger.log_progress(subdivisions, subdivisions);
 
-        return final_heap;
+        return heap.drain();
     }
 };
 
 template<typename Rule, typename ErrorHeuristic>
 auto regions_generator_adaptive_priorityqueue(const Rule& r, const ErrorHeuristic& er,
-                                           std::size_t subdivisions) {
-    return RegionsGeneratorAdaptiveMq<Rule, ErrorHeuristic>(r, er, subdivisions);
+                                              std::size_t subdivisions) {
+    return RegionsGeneratorAdaptivePq<Rule, ErrorHeuristic>(r, er, subdivisions);
 }
 
-}
+} // namespace viltrum
