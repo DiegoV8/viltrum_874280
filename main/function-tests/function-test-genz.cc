@@ -59,6 +59,47 @@ void run_test_Pq(const std::string& name, const Function& f, const std::vector<s
     }
 }
 
+template<typename Function, std::size_t N>
+void run_test_PqS(const std::string& name, const Function& f, const std::vector<std::size_t>& steps, std::ofstream& file, const std::string& run_name) {
+    auto range = range_all<N>(0.0f, 1.0f);
+    float real_value = f.integral_primary();
+
+    std::cout << "\n--- Test: " << name << " ---" << std::endl;
+    std::cout << "Valor analítico real: " << real_value << std::endl;
+    std::cout << std::left << std::setw(12) << "Iteraciones" 
+              << "| " << std::setw(15) << "Resultado" 
+              << "| " << std::setw(15) << "Error Rel." 
+              << "| " << std::setw(15) << "Tiempo (ms)" << std::endl;
+    std::cout << "-----------------------------------------------------------------------" << std::endl;
+
+    for (auto s : steps) {
+        auto integrator = integrator_adaptive_iterations_parallel(
+            nested(simpson, trapezoidal), 
+            s
+        );
+
+        auto start = std::chrono::high_resolution_clock::now();
+        float result = integrate(integrator, f, range);
+        auto end = std::chrono::high_resolution_clock::now();
+        
+        std::chrono::duration<double, std::milli> duration = end - start;
+
+        float error = std::abs(result - real_value) / (real_value != 0 ? real_value : 1.0f);
+
+        if (file.is_open()) {
+            file << run_name << "_" << name << ";" 
+                    << s << ";"               
+                    << error << ";" 
+                    << duration.count() << "\n";
+        }
+
+        std::cout << std::left << std::setw(12) << s 
+                  << "| " << std::setw(15) << result 
+                  << "| " << std::setw(15) << error 
+                  << "| " << std::setw(15) << duration.count() << std::endl;
+    }
+}
+
 /**
  * @brief Funcion para probar la integración de una función usando Multiqueue.
  * @param name Nombre de la función a probar.
@@ -241,7 +282,7 @@ int main(int argc, char* argv[]) {
         run_test_Mq<GenzGaussianpeak<Dim>, Dim>("Gaussian Peak", GenzGaussianpeak<Dim>(w_vec, c), steps, csv_file, run_name);
         run_test_Mq<GenzOscilatory<Dim>, Dim>("Oscillatory", GenzOscilatory<Dim>(w_scalar, a), steps, csv_file, run_name);
         run_test_Mq<GenzProductpeak<Dim>, Dim>("Product Peak", GenzProductpeak<Dim>(w_vec, c), steps, csv_file, run_name);
-        run_name = "priorityqueue";
+        run_name = "priorityqueue_conc";
         std::cout << "Tests: " << run_name << std::endl;
         run_test_Pq<GenzContinuous<Dim>, Dim>("Continuous", GenzContinuous<Dim>(a, u), steps, csv_file, run_name);
         run_test_Pq<GenzCornerpeak<Dim>, Dim>("Corner Peak", GenzCornerpeak<Dim>(c), steps, csv_file, run_name);
@@ -257,6 +298,14 @@ int main(int argc, char* argv[]) {
         run_test_Sl<GenzGaussianpeak<Dim>, Dim>("Gaussian Peak", GenzGaussianpeak<Dim>(w_vec, c), steps, csv_file, run_name);
         run_test_Sl<GenzOscilatory<Dim>, Dim>("Oscillatory", GenzOscilatory<Dim>(w_scalar, a), steps, csv_file, run_name);
         run_test_Sl<GenzProductpeak<Dim>, Dim>("Product Peak", GenzProductpeak<Dim>(w_vec, c), steps, csv_file, run_name);
+        run_name = "priorityqueue_sec";
+        std::cout << "Tests: " << run_name << std::endl;
+        run_test_PqS<GenzContinuous<Dim>, Dim>("Continuous", GenzContinuous<Dim>(a, u), steps, csv_file, run_name);
+        run_test_PqS<GenzCornerpeak<Dim>, Dim>("Corner Peak", GenzCornerpeak<Dim>(c), steps, csv_file, run_name);
+        run_test_PqS<GenzDiscontinuous<Dim>, Dim>("Discontinuous", GenzDiscontinuous<Dim>(a, u), steps, csv_file, run_name);
+        run_test_PqS<GenzGaussianpeak<Dim>, Dim>("Gaussian Peak", GenzGaussianpeak<Dim>(w_vec, c), steps, csv_file, run_name);
+        run_test_PqS<GenzOscilatory<Dim>, Dim>("Oscillatory", GenzOscilatory<Dim>(w_scalar, a), steps, csv_file, run_name);
+        run_test_PqS<GenzProductpeak<Dim>, Dim>("Product Peak", GenzProductpeak<Dim>(w_vec, c), steps, csv_file, run_name);
         break;
     
     default:
