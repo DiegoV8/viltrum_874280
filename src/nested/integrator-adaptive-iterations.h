@@ -29,7 +29,7 @@ auto integrator_adaptive_iterations_parallel_Mq(const R& rule, const EH& error_h
 
 template<typename R, typename EH>
 auto integrator_adaptive_iterations_parallel_Pq(const R& rule, const EH& error_heuristic, std::size_t iterations, std::size_t nmutexes=16) {
-    return integrator_region_based(regions_generator_adaptive_priorityqueue(rule,error_heuristic,iterations),regions_integrator_parallel_regions(nmutexes));
+    return integrator_region_based(regions_generator_adaptive_heap(rule,error_heuristic,iterations),regions_integrator_parallel_regions(nmutexes));
 }
 
 template<typename R, typename EH>
